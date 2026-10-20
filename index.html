@@ -39,24 +39,50 @@
   </div>
   <p id="info">動画を読み込んでいます…</p>
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const videoId = params.get("v");
-    const start = Math.max(0, parseInt(params.get("s") || "0", 10) || 0);
-    const title = params.get("t") || "共有クリップ";
+  
+<script>
+  const params = new URLSearchParams(location.search);
 
-    document.getElementById("title").textContent = title;
+  const videoId = params.get("v");
+  const start = Math.max(
+    0,
+    parseInt(params.get("s") || "0", 10) || 0
+  );
+  const endValue = params.get("e");
+  const end = endValue === null
+    ? null
+    : parseInt(endValue, 10);
+  const title = params.get("t") || "共有クリップ";
 
-    if (/^[a-zA-Z0-9_-]{11}$/.test(videoId || "")) {
-      document.getElementById("video").src =
-        "https://www.youtube.com/embed/" +
-        videoId + "?start=" + start + "&autoplay=0";
-      document.getElementById("info").textContent =
-        "開始位置：" + start + "秒";
-    } else {
-      document.getElementById("info").textContent =
-        "共有リンクが正しくありません。";
+  document.getElementById("title").textContent = title;
+
+  const validVideoId = /^[a-zA-Z0-9_-]{11}$/.test(videoId || "");
+  const validEnd = end === null ||
+    (Number.isInteger(end) && end > start);
+
+  if (validVideoId && validEnd) {
+    const playerParams = new URLSearchParams({
+      start: String(start),
+      autoplay: "0"
+    });
+
+    if (end !== null) {
+      playerParams.set("end", String(end));
     }
-  </script>
+
+    document.getElementById("video").src =
+      "https://www.youtube.com/embed/" +
+      videoId + "?" + playerParams.toString();
+
+    document.getElementById("info").textContent =
+      end !== null
+        ? "再生範囲：" + start + "秒 ～ " + end + "秒"
+        : "開始位置：" + start + "秒";
+  } else {
+    document.getElementById("info").textContent =
+      "共有リンクが正しくありません。";
+  }
+</script>
+
 </body>
 </html>
