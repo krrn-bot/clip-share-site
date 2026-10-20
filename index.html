@@ -38,7 +38,9 @@
     </iframe>
   </div>
   <p id="info">動画を読み込んでいます…</p>
-
+<button id="restart" type="button">
+  ↺ 開始位置に戻る
+</button>
   
 
 <script>
@@ -58,7 +60,8 @@
   const titleElement = document.getElementById("title");
   const infoElement = document.getElementById("info");
   const videoElement = document.getElementById("video");
-
+const restartButton = document.getElementById("restart");
+restartButton.disabled = true;
   titleElement.textContent = title;
 
   const validVideoId =
@@ -91,7 +94,21 @@
     let player = null;
     let monitorId = null;
     let reachedEnd = false;
+restartButton.addEventListener("click", function () {
+  if (!player) {
+    return;
+  }
 
+  // いったん一時停止して開始位置へ戻る
+  player.pauseVideo();
+  reachedEnd = false;
+  player.seekTo(start, true);
+
+  infoElement.textContent =
+    end !== null
+      ? "再生範囲：" + start + "秒 ～ " + end + "秒"
+      : "開始位置：" + start + "秒";
+});
     function stopMonitoring() {
       if (monitorId !== null) {
         clearInterval(monitorId);
@@ -103,11 +120,13 @@
       player = new YT.Player("video", {
         events: {
           onReady: function () {
-            infoElement.textContent =
-              end !== null
-                ? "再生範囲：" + start + "秒 ～ " + end + "秒"
-                : "開始位置：" + start + "秒";
-          },
+  restartButton.disabled = false;
+
+  infoElement.textContent =
+    end !== null
+      ? "再生範囲：" + start + "秒 ～ " + end + "秒"
+      : "開始位置：" + start + "秒";
+},
 
           onStateChange: function (event) {
             // 再生開始
