@@ -40,6 +40,7 @@
   <p id="info">動画を読み込んでいます…</p>
 
   
+
 <script>
   const params = new URLSearchParams(location.search);
 
@@ -51,38 +52,109 @@
   const endValue = params.get("e");
   const end = endValue === null
     ? null
-    : parseInt(endValue, 10);
+    : Number(endValue);
   const title = params.get("t") || "共有クリップ";
 
-  document.getElementById("title").textContent = title;
+  const titleElement = document.getElementById("title");
+  const infoElement = document.getElementById("info");
+  const videoElement = document.getElementById("video");
 
-  const validVideoId = /^[a-zA-Z0-9_-]{11}$/.test(videoId || "");
-  const validEnd = end === null ||
+  titleElement.textContent = title;
+
+  const validVideoId =
+    /^[a-zA-Z0-9_-]{11}$/.test(videoId || "");
+
+  const validEnd =
+    end === null ||
     (Number.isInteger(end) && end > start);
 
-  if (validVideoId && validEnd) {
-    const playerParams = new URLSearchParams({
-      start: String(start),
-      autoplay: "0"
-    });
-
-    if (end !== null) {
-      playerParams.set("end", String(end));
-    }
-
-    document.getElementById("video").src =
-      "https://www.youtube.com/embed/" +
-      videoId + "?" + playerParams.toString();
-
-    document.getElementById("info").textContent =
+  if (!validVideoId || !validEnd) {
+    infoElement.textContent = "共有リンクが正しくありません。";
+  } else {
+    infoElement.textContent =
       end !== null
         ? "再生範囲：" + start + "秒 ～ " + end + "秒"
         : "開始位置：" + start + "秒";
-  } else {
-    document.getElementById("info").textContent =
-      "共有リンクが正しくありません。";
+
+    const playerParams = new URLSearchParams({
+      start: String(start),
+      autoplay: "0",
+      enablejsapi: "1",
+      playsinline: "1",
+      origin: location.origin
+    });
+
+    videoElement.src =
+      "https://www.youtube.com/embed/" +
+      videoId + "?" + playerParams.toString();
+
+    let player = null;
+    let monitorId = null;
+    let reachedEnd = false;
+
+    function stopMonitoring() {
+      if (monitorId !== null) {
+        clearInterval(monitorId);
+        monitorId = null;
+      }
+    }
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player("video", {
+        events: {
+          onReady: function () {
+            infoElement.textContent =
+              end !== null
+                ? "再生範囲：" + start + "秒 ～ " + end + "秒"
+                : "開始位置：" + start + "秒";
+          },
+
+          onStateChange: function (event) {
+            // 再生開始
+            if (event.data === YT.PlayerState.PLAYING) {
+              stopMonitoring();
+
+              if (end === null || reachedEnd) {
+                return;
+              }
+
+              monitorId = setInterval(function () {
+                if (player.getCurrentTime() >= end) {
+                  reachedEnd = true;
+                  stopMonitoring();
+
+                  player.pauseVideo();
+                  player.seekTo(end, true);
+
+                  infoElement.textContent =
+                    "再生範囲：" + start + "秒 ～ " +
+                    end + "秒（一時停止中）";
+                }
+              }, 100);
+            }
+
+            // 一時停止・終了時は監視を停止
+            if (
+              event.data === YT.PlayerState.PAUSED ||
+              event.data === YT.PlayerState.ENDED
+            ) {
+              stopMonitoring();
+            }
+          }
+        }
+      });
+    }
+
+    // YouTube IFrame Player APIを読み込む
+    window.onYouTubeIframeAPIReady =
+      onYouTubeIframeAPIReady;
+
+    const apiScript = document.createElement("script");
+    apiScript.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(apiScript);
   }
 </script>
+
 
 </body>
 </html>
