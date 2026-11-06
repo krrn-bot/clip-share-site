@@ -74,6 +74,65 @@
   color: #999;
   text-align: center;
 }
+    
+/* アプリ紹介 */
+.app-about {
+  max-width: 800px;
+  margin: 36px auto 0;
+  padding: 24px 20px;
+  background: #1c1c1c;
+  border-radius: 12px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.app-about h2 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.app-about h3 {
+  margin: 24px 0 10px;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.app-about p,
+.app-about li {
+  color: #cccccc;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.app-about ul,
+.app-about ol {
+  padding-left: 24px;
+}
+
+.app-about li {
+  margin-bottom: 8px;
+}
+
+/* フッター */
+.site-footer {
+  margin: 32px auto 12px;
+  padding: 20px 12px;
+  border-top: 1px solid #444;
+  max-width: 800px;
+}
+
+.site-footer a {
+  color: #90caf9;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-footer p {
+  font-size: 13px;
+  color: #999;
+}
+
   </style>
 </head>
 <body>
@@ -103,10 +162,70 @@
   </a>
 </div>
 
+
 <div class="ad-space">
   広告スペース
 </div>
+
+<!-- アプリ紹介 -->
+<section class="app-about">
+  <h2>YT Clip Makerについて</h2>
+
+  <p>
+    YT Clip Makerは、YouTube動画の見たい区間を指定し、
+    クリップとして保存・共有できるAndroidアプリです。
+  </p>
+
+  <p>
+    動画そのものを切り取って保存するのではなく、
+    動画URLと開始・終了時間を記録することで、
+    お気に入りのシーンを簡単に見返せます。
+  </p>
+
+  <h3>主な機能</h3>
+  <ul>
+    <li>動画の開始・終了位置を指定</li>
+    <li>秒数単位・コマ単位で再生位置を調整</li>
+    <li>クリップにタイトルやメモを付けて保存</li>
+    <li>保存したクリップを一覧で管理</li>
+    <li>共有リンクを作成して他の人に送信</li>
+  </ul>
+
+  <h3>使い方</h3>
+  <ol>
+    <li>YouTube動画のURLを入力する</li>
+    <li>クリップの開始・終了位置を指定する</li>
+    <li>タイトルやメモを付けて保存する</li>
+    <li>共有リンクを作成して送信する</li>
+  </ol>
+
+  <h3>共有クリップについて</h3>
+  <p>
+    このページでは、YT Clip Makerで指定された
+    動画の区間を再生できます。
+    再生ボタンで動画を再生・一時停止でき、
+    開始位置へ戻るボタンで指定された位置に戻れます。
+  </p>
+  <p>
+    動画の再生にはYouTubeの埋め込みプレイヤーを使用します。
+    元の動画が削除・非公開になった場合や、
+    埋め込み再生が制限されている場合は、
+    再生できないことがあります。
+  </p>
+</section>
+
+<!-- フッター -->
+<footer class="site-footer">
+  <a href="https://krrn-bot.github.io/yt-clip-maker-privacy/"
+     target="_blank"
+     rel="noopener noreferrer">
+    プライバシーポリシー
+  </a>
+  <p>YT Clip Maker</p>
+</footer>
+
 <p id="info" hidden></p>
+
   
 
 <script>
