@@ -127,10 +127,17 @@
       allowfullscreen>
     </iframe>
   </div>
-  <div class="controls">
+  
+<p id="firstPlayGuide" hidden>
+  初回再生は動画内の再生ボタンを押してください。<br>
+  再生開始後は下のボタンでも操作できます。
+</p>
+
+<div class="controls">
   <button id="playPause" type="button" disabled>
     ▷ 再生
   </button>
+
 
   <button id="restart" type="button" disabled>
     ↺ 開始位置に戻る
@@ -229,6 +236,15 @@ playPauseButton.disabled = true;
   const videoElement = document.getElementById("video");
 const restartButton = document.getElementById("restart");
 restartButton.disabled = true;
+  
+const firstPlayGuide = document.getElementById("firstPlayGuide");
+
+// Xのアプリ内ブラウザかどうかを判定
+const isXBrowser = /Twitter/i.test(navigator.userAgent);
+
+// Xのアプリ内ブラウザでは初回再生の案内を表示
+firstPlayGuide.hidden = !isXBrowser;
+
   titleElement.textContent = title;
 
   const validVideoId =
@@ -321,9 +337,14 @@ restartButton.addEventListener("click", function () {
 
           onStateChange: function (event) {
             // 再生開始
-            if (event.data === YT.PlayerState.PLAYING) {
-              playPauseButton.textContent = "Ⅱ 一時停止";
-              stopMonitoring();
+           
+if (event.data === YT.PlayerState.PLAYING) {
+  // 動画の再生が始まったら初回案内を消す
+  firstPlayGuide.hidden = true;
+
+  playPauseButton.textContent = "Ⅱ 一時停止";
+  stopMonitoring();
+
 
               if (end === null || reachedEnd) {
                 return;
