@@ -246,13 +246,16 @@ restartButton.disabled = true;
         ? "再生範囲：" + start + "秒 ～ " + end + "秒"
         : "開始位置：" + start + "秒";
 
-    const playerParams = new URLSearchParams({
-      start: String(start),
-      autoplay: "0",
-      enablejsapi: "1",
-      playsinline: "1",
-      origin: location.origin
-    });
+    
+const playerParams = new URLSearchParams({
+  start: String(start),
+  autoplay: "0",
+  controls: "0",
+  enablejsapi: "1",
+  playsinline: "1",
+  origin: location.origin
+});
+
 
     videoElement.src =
       "https://www.youtube.com/embed/" +
